@@ -1,12 +1,13 @@
 package com.skilldistillery.filmquery.entities;
 
+import java.util.List;
 
 public class Film {
-	
+
 	private int id;
 	private String title;
 	private String description;
-	private int releaseDate;
+	private int releaseYear;
 	private int languageId;
 	private int rentalDuration;
 	private double rentalRate;
@@ -14,17 +15,22 @@ public class Film {
 	private double replacementCost;
 	private String rating;
 	private String specialFeatures;
-	
+	private List<Actor> cast;
+
 	// constructors
+	public Film() {
+		
+	}
 	
-	public Film(int id, String title, String description, int releaseDate,
+	public Film(int id, String title, String description, int releaseYear,
 			int languageId, int rentalDuration, double rentalRate, int length,
-			double replacementCost, String rating, String specialFeatures) {
+			double replacementCost, String rating, String specialFeatures,
+			List<Actor> cast) {
 		super();
 		this.id = id;
 		this.title = title;
 		this.description = description;
-		this.releaseDate = releaseDate;
+		this.releaseYear = releaseYear;
 		this.languageId = languageId;
 		this.rentalDuration = rentalDuration;
 		this.rentalRate = rentalRate;
@@ -32,22 +38,23 @@ public class Film {
 		this.replacementCost = replacementCost;
 		this.rating = rating;
 		this.specialFeatures = specialFeatures;
+		this.cast = cast;
 	}
 
-	
 	// equals and hashcode
-	
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
+		result = prime * result + ((cast == null) ? 0 : cast.hashCode());
 		result = prime * result
 				+ ((description == null) ? 0 : description.hashCode());
 		result = prime * result + id;
 		result = prime * result + languageId;
 		result = prime * result + length;
 		result = prime * result + ((rating == null) ? 0 : rating.hashCode());
-		result = prime * result + releaseDate;
+		result = prime * result + releaseYear;
 		result = prime * result + rentalDuration;
 		long temp;
 		temp = Double.doubleToLongBits(rentalRate);
@@ -69,6 +76,11 @@ public class Film {
 		if (getClass() != obj.getClass())
 			return false;
 		Film other = (Film) obj;
+		if (cast == null) {
+			if (other.cast != null)
+				return false;
+		} else if (!cast.equals(other.cast))
+			return false;
 		if (description == null) {
 			if (other.description != null)
 				return false;
@@ -85,7 +97,7 @@ public class Film {
 				return false;
 		} else if (!rating.equals(other.rating))
 			return false;
-		if (releaseDate != other.releaseDate)
+		if (releaseYear != other.releaseYear)
 			return false;
 		if (rentalDuration != other.rentalDuration)
 			return false;
@@ -108,118 +120,108 @@ public class Film {
 		return true;
 	}
 
-
 	// getters and setters
 	public int getId() {
 		return id;
 	}
 
-
 	public void setId(int id) {
 		this.id = id;
 	}
-
 
 	public String getTitle() {
 		return title;
 	}
 
-
 	public void setTitle(String title) {
 		this.title = title;
 	}
-
 
 	public String getDescription() {
 		return description;
 	}
 
-
 	public void setDescription(String description) {
 		this.description = description;
 	}
 
-
-	public int getReleaseDate() {
-		return releaseDate;
+	public int getReleaseYear() {
+		return releaseYear;
 	}
 
-
-	public void setReleaseDate(int releaseDate) {
-		this.releaseDate = releaseDate;
+	public void setReleaseYear(int releaseYear) {
+		this.releaseYear = releaseYear;
 	}
-
 
 	public int getLanguageId() {
 		return languageId;
 	}
 
-
 	public void setLanguageId(int languageId) {
 		this.languageId = languageId;
 	}
-
 
 	public int getRentalDuration() {
 		return rentalDuration;
 	}
 
-
 	public void setRentalDuration(int rentalDuration) {
 		this.rentalDuration = rentalDuration;
 	}
-
 
 	public double getRentalRate() {
 		return rentalRate;
 	}
 
-
 	public void setRentalRate(double rentalRate) {
 		this.rentalRate = rentalRate;
 	}
-
 
 	public int getLength() {
 		return length;
 	}
 
-
 	public void setLength(int length) {
 		this.length = length;
 	}
-
 
 	public double getReplacementCost() {
 		return replacementCost;
 	}
 
-
 	public void setReplacementCost(double replacementCost) {
 		this.replacementCost = replacementCost;
 	}
-
 
 	public String getRating() {
 		return rating;
 	}
 
-
 	public void setRating(String rating) {
 		this.rating = rating;
 	}
-
 
 	public String getSpecialFeatures() {
 		return specialFeatures;
 	}
 
-
 	public void setSpecialFeatures(String specialFeatures) {
 		this.specialFeatures = specialFeatures;
 	}
+	
+	public List<Actor> getCast() {
+		return cast;
+	}
+	
+	public void setCast(List<Actor> cast) {
+		this.cast = cast;
+	}
+	
 
+	
+	
 	// toString
+	
 
 	@Override
 	public String toString() {
@@ -230,8 +232,8 @@ public class Film {
 		builder.append(title);
 		builder.append(" \ndescription: ");
 		builder.append(description);
-		builder.append(" \nreleaseDate: ");
-		builder.append(releaseDate);
+		builder.append(" \nreleaseYear: ");
+		builder.append(releaseYear);
 		builder.append(" \nlanguageId: ");
 		builder.append(languageId);
 		builder.append(" \nrentalDuration: ");
@@ -246,14 +248,13 @@ public class Film {
 		builder.append(rating);
 		builder.append(" \nspecialFeatures: ");
 		builder.append(specialFeatures);
+		builder.append(" \ncast: ");
+		builder.append(cast);
 		builder.append("\n");
 		return builder.toString();
 	}
+
+
 	
-	
-	
-	
-	
-	
-	
+
 }

@@ -10,6 +10,11 @@ public class Actor {
 	private List<Film> films;
 	
 	// constructors
+	
+	public Actor() {
+		
+	}
+	
 	public Actor(int id, String fName, String lName, List<Film> films) {
 		super();
 		this.id = id;

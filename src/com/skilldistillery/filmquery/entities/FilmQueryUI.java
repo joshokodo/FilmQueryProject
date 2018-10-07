@@ -89,23 +89,18 @@ public class FilmQueryUI extends AbstractUI {
 	}
 
 	// specially made UI
-	
+
 	private void setAsFilmSimpleDetailsUI(Film film) {
 		clearLines();
-		addBorder();
+		addTopOfUI();
+		addHeaders(film.getTitle(), 
+				"Release Year:" + film.getReleaseYear(),
+				"Rated " + film.getRating(),
+				"Language: " + film.getLanguageId());
+		addBottomOfUI();
 		addSpace();
-		addCenterAlignedText(film.getTitle());
-		addCenterAlignedText("Release Year: " + film.getReleaseYear());
-		addCenterAlignedText("Rated " + film.getRating());
-		addCenterAlignedText("Language: " + film.getLanguageId());
-		addSpace();
-		addBorder();
-		addSpace();
-		addCenterAlignedText("Description");
-		addSpace();
-		addLeftAlignedText(film.getDescription());
-		addSpace();
-		addBorder();
+		addHeaders("Description",film.getDescription() );
+		addBottomOfUI();
 		addSpace();
 		addCenterAlignedText("Cast");
 		addSpace();

@@ -17,11 +17,18 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 	private static final String USERNAME = "student";
 	private static final String PASSWORD = "student";
 	private static final String ACTOR_BY_ID_SQL = "SELECT * FROM actor WHERE actor.id = ?";
-	private static final String ACTORS_BY_FILM_ID_SQL = "";
+	private static final String ACTORS_BY_FILM_ID_SQL = " SELECT a.first_name, a.last_name, f.title, fa.film_id, fa.actor_id\n"
+			+ "  FROM actor a JOIN film_actor fa ON a.id = fa.actor_id\n"
+			+ "               JOIN film f ON fa.film_id = f.id\n"
+			+ "               where fa.film_id = 3\n" + " ORDER BY f.title;";
 	private static final String FILM_BY_ID_SQL = "SELECT * FROM film WHERE film.id = ?";
 	private static final String FILM_BY_KEYWORD_SQL = "";
-	private static final String FILMS_BY_ACTOR_ID_SQL = "";
-	
+	private static final String FILMS_BY_ACTOR_ID_SQL = " SELECT f.*\n"
+			+ "  FROM actor a JOIN film_actor fa ON a.id = fa.actor_id\n"
+			+ "               JOIN film f ON fa.film_id = f.id\n"
+			+ "               where fa.actor_id = 3\n" + " ORDER BY f.title;"
+			+ " ORDER BY f.title;";
+
 	private Connection conn;
 	private PreparedStatement stmt;
 	private ResultSet results;
@@ -57,7 +64,7 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 		if (results.next()) {
 			actor = getActorFromResult(results);
 		}
-		
+
 		closeConnections();
 		return actor;
 	}
@@ -70,7 +77,7 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 		while (results.next()) {
 			cast.add(getActorFromResult(results));
 		}
-		
+
 		closeConnections();
 		return cast;
 	}
@@ -98,9 +105,9 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 		closeConnections();
 
 		return film;
-		
+
 	}
-	
+
 	// helper methods
 	private Film getFilmFromResult(ResultSet filmResult) throws SQLException {
 
@@ -154,7 +161,7 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 		} finally {
 			try {
 				return stmt.executeQuery();
-				
+
 			} catch (SQLException sqle) {
 				System.err.println(sqle);
 				System.out.println("In getQuary()");
@@ -162,7 +169,7 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 		}
 		return null;
 	}
-	
+
 	private ResultSet getQuary(String sql, String keyword) {
 
 		try {
@@ -175,7 +182,7 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 		} finally {
 			try {
 				return stmt.executeQuery();
-				
+
 			} catch (SQLException sqle) {
 				System.err.println(sqle);
 				System.out.println("In getQuary()");
@@ -184,11 +191,28 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 		return null;
 	}
 
-	
 	private void closeConnections() throws SQLException {
 		conn.close();
 		stmt.close();
 		results.close();
+	}
+
+	@Override
+	public String getLanguageOfFilm(Film film) throws SQLException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getCategoryOfFilm(Film film) throws SQLException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getInventoryOfFilm(Film film) throws SQLException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

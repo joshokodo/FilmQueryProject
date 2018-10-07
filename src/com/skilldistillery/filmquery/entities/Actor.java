@@ -117,6 +117,10 @@ public class Actor {
 	public void setlName(String lName) {
 		this.lName = lName;
 	}
+	
+	public String getFullName() {
+		return fName + " " + lName;
+	}
 
 
 	public List<Film> getFilms() {

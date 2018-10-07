@@ -17,14 +17,10 @@ public class FilmQueryApp {
 
 	public static void main(String[] args) {
 		FilmQueryApp app = new FilmQueryApp();
-		app.launchApp();
+//		app.launchApp();
 
-		// try {
-		// app.test();
-		// } catch (SQLException e) {
-		// // TODO Auto-generated catch block
-		// e.printStackTrace();
-		// }
+		 app.launchApp();
+		 
 	}
 
 	public FilmQueryApp() {
@@ -101,7 +97,7 @@ public class FilmQueryApp {
 				continue;
 
 			} else if (filmFound) {
-
+				ui.printFilmSimpleDetails(film);
 				numberChoice = ui.moreOptionsPrompt();
 
 				if (numberChoice == 1) {

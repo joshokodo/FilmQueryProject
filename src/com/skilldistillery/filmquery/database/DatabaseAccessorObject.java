@@ -17,17 +17,24 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 	private static final String USERNAME = "student";
 	private static final String PASSWORD = "student";
 	private static final String ACTOR_BY_ID_SQL = "SELECT * FROM actor WHERE actor.id = ?";
-	private static final String ACTORS_BY_FILM_ID_SQL = " SELECT a.first_name, a.last_name, f.title, fa.film_id, fa.actor_id\n"
+	
+	private static final String ACTORS_BY_FILM_ID_SQL = 
+			   " SELECT a.*, f.*"
 			+ "  FROM actor a JOIN film_actor fa ON a.id = fa.actor_id\n"
-			+ "               JOIN film f ON fa.film_id = f.id\n"
-			+ "               where fa.film_id = 3\n" + " ORDER BY f.title;";
+			+ "  JOIN film f ON fa.film_id = f.id\n"
+			+ "  WHERE fa.film_id = ?;";
+	
 	private static final String FILM_BY_ID_SQL = "SELECT * FROM film WHERE film.id = ?";
-	private static final String FILM_BY_KEYWORD_SQL = "";
-	private static final String FILMS_BY_ACTOR_ID_SQL = " SELECT f.*\n"
+	
+	private static final String FILM_BY_KEYWORD_SQL = 
+			   " SELECT f.*, a.*"
+			+ "  FROM actor a JOIN film_actor fa ON a.id = fa.actor_id"
+			+ "	 JOIN film f ON fa.film_id = f.id"
+			+ "	 WHERE f.title LIKE ?";
+	private static final String FILMS_BY_ACTOR_ID_SQL = " SELECT f.*, a.*"
 			+ "  FROM actor a JOIN film_actor fa ON a.id = fa.actor_id\n"
 			+ "               JOIN film f ON fa.film_id = f.id\n"
-			+ "               where fa.actor_id = 3\n" + " ORDER BY f.title;"
-			+ " ORDER BY f.title;";
+			+ "               WHERE fa.actor_id = ?\n";
 
 	private Connection conn;
 	private PreparedStatement stmt;
@@ -49,7 +56,21 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 		results = getQuary(FILM_BY_ID_SQL, filmId);
 
 		if (results.next()) {
-			film = getFilmFromResult(results);
+			film = new Film();
+			System.out.println(film);
+
+			film.setId(results.getInt("id"));
+			film.setTitle(results.getString("title"));
+			film.setDescription(results.getString("description"));
+			film.setReleaseYear(results.getInt("release_year"));
+			film.setLanguageId(results.getInt("language_id"));
+			film.setRentalDuration(results.getInt("rental_duration"));
+			film.setRentalRate(results.getDouble("rental_rate"));
+			film.setLength(results.getInt("length"));
+			film.setReplacementCost(results.getDouble("replacement_cost"));
+			film.setRating(results.getString("rating"));
+			film.setSpecialFeatures(results.getString("special_features"));
+			film.setCast(getActorsByFilmId(film.getId()));
 		}
 		closeConnections();
 
@@ -62,7 +83,14 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 		results = getQuary(ACTOR_BY_ID_SQL, actorId);
 
 		if (results.next()) {
-			actor = getActorFromResult(results);
+			actor = new Actor();
+
+			actor.setfName(results.getString("first_name"));
+			actor.setlName(results.getString("last_name"));
+			actor.setId(results.getInt("id"));
+			actor.setFilms(getFilmsByActorId(actor.getId()));
+
+			return actor;
 		}
 
 		closeConnections();
@@ -75,7 +103,12 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 		results = getQuary(ACTORS_BY_FILM_ID_SQL, filmId);
 
 		while (results.next()) {
-			cast.add(getActorFromResult(results));
+			Actor actor = new Actor();
+
+			actor.setfName(results.getString("first_name"));
+			actor.setlName(results.getString("last_name"));
+			actor.setId(results.getInt("id"));
+			cast.add(actor);
 		}
 
 		closeConnections();
@@ -88,7 +121,22 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 		results = getQuary(FILMS_BY_ACTOR_ID_SQL, actorId);
 
 		while (results.next()) {
-			films.add(getFilmFromResult(results));
+
+			Film film = new Film();
+
+			film.setId(results.getInt("id"));
+			film.setTitle(results.getString("title"));
+			film.setDescription(results.getString("description"));
+			film.setReleaseYear(results.getInt("release_year"));
+			film.setLanguageId(results.getInt("language_id"));
+			film.setRentalDuration(results.getInt("rental_duration"));
+			film.setRentalRate(results.getDouble("rental_rate"));
+			film.setLength(results.getInt("length"));
+			film.setReplacementCost(results.getDouble("replacement_cost"));
+			film.setRating(results.getString("rating"));
+			film.setSpecialFeatures(results.getString("special_features"));
+			film.setCast(getActorsByFilmId(film.getId()));
+			films.add(film);;
 		}
 		closeConnections();
 		return films;
@@ -97,7 +145,7 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 	@Override
 	public Film getFilmByKeyword(String keyword) throws SQLException {
 		Film film = null;
-		results = getQuary(FILM_BY_KEYWORD_SQL, keyword);
+		results = getQuary(FILM_BY_KEYWORD_SQL, "%" + keyword + "%");
 
 		if (results.next()) {
 			film = getFilmFromResult(results);
@@ -116,6 +164,7 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 		}
 
 		Film film = new Film();
+		System.out.println(film);
 
 		film.setId(filmResult.getInt("id"));
 		film.setTitle(filmResult.getString("title"));

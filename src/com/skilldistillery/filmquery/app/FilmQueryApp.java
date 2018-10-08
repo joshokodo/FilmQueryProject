@@ -1,6 +1,9 @@
 package com.skilldistillery.filmquery.app;
 
 import java.sql.SQLException;
+import java.util.List;
+
+import javax.swing.text.StyledEditorKit.ForegroundAction;
 
 import com.skilldistillery.filmquery.database.DatabaseAccessor;
 import com.skilldistillery.filmquery.database.DatabaseAccessorObject;
@@ -17,10 +20,10 @@ public class FilmQueryApp {
 
 	public static void main(String[] args) {
 		FilmQueryApp app = new FilmQueryApp();
-//		app.launchApp();
+		// app.launchApp();
 
-		 app.launchApp();
-		 
+		app.launchApp();
+
 	}
 
 	public FilmQueryApp() {
@@ -89,19 +92,25 @@ public class FilmQueryApp {
 				break;
 			}
 
-			Film film = db.getFilmByKeyword(textChoice);
-			boolean filmFound = film != null ? true : false;
+			List<Film> films = db.getFilmByKeyword(textChoice);
+			boolean filmFound = films != null ? true : false;
 
 			if (!filmFound) {
 				ui.printFilmNotFound();
 				continue;
 
 			} else if (filmFound) {
-				ui.printFilmSimpleDetails(film);
+				
+				for (Film film : films) {
+					ui.printFilmSimpleDetails(film);
+
+				}
 				numberChoice = ui.moreOptionsPrompt();
 
 				if (numberChoice == 1) {
-					ui.printFilmAllDetails(film);
+					for (Film film : films) {
+						ui.printFilmAllDetails(film);
+					}
 
 				} else if (numberChoice == 2) {
 					continue;

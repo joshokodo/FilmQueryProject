@@ -9,6 +9,7 @@ public class Film {
 	private String description;
 	private int releaseYear;
 	private int languageId;
+	private String language;
 	private int rentalDuration;
 	private double rentalRate;
 	private int length;
@@ -217,11 +218,19 @@ public class Film {
 		this.cast = cast;
 	}
 	
+	public String getLanguage() {
+		return language;
+	}
+	
+	public void setLanguage(String language) {
+		this.language = language;
+	}
 
 	
 	
 	// toString
 	
+
 
 	@Override
 	public String toString() {
@@ -236,6 +245,8 @@ public class Film {
 		builder.append(releaseYear);
 		builder.append(" \nlanguageId: ");
 		builder.append(languageId);
+		builder.append(" \nlanguage: ");
+		builder.append(language);
 		builder.append(" \nrentalDuration: ");
 		builder.append(rentalDuration);
 		builder.append(" \nrentalRate: ");
@@ -253,6 +264,8 @@ public class Film {
 		builder.append("\n");
 		return builder.toString();
 	}
+
+
 
 
 	

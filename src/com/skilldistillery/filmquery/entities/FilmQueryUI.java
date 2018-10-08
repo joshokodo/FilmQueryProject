@@ -96,7 +96,7 @@ public class FilmQueryUI extends AbstractUI {
 		addHeaders(film.getTitle(), 
 				"Release Year:" + film.getReleaseYear(),
 				"Rated " + film.getRating(),
-				"Language: " + film.getLanguageId());
+				"Language: " + film.getLanguage());
 		addBottomOfUI();
 		addSpace();
 		addHeaders("Description",film.getDescription() );

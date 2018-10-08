@@ -8,11 +8,8 @@ import com.skilldistillery.filmquery.entities.Film;
 
 public interface DatabaseAccessor {
   public Film getFilmById(int filmId) throws SQLException;
-  public Film getFilmByKeyword(String keyword) throws SQLException;
+  public List<Film> getFilmByKeyword(String keyword) throws SQLException;
   public Actor getActorById(int actorId) throws SQLException;
-  public String getLanguageOfFilm(Film film) throws SQLException;
-  public String getCategoryOfFilm(Film film) throws SQLException;
-  public String getInventoryOfFilm(Film film) throws SQLException;
   public List<Actor> getActorsByFilmId(int filmId) throws SQLException;
   public List<Film> getFilmsByActorId(int actorId) throws SQLException;
 }

@@ -17,7 +17,7 @@ public abstract class AbstractUI extends AbstractUserInput {
 	private int spacing;
 	private int wrapAroundLimit = 50;
 
-	//constructors
+	// constructors
 	public AbstractUI() {
 		lines = new ArrayList<>();
 		borderLining = DEFAULT_BORDER_LINING;
@@ -29,17 +29,15 @@ public abstract class AbstractUI extends AbstractUserInput {
 		super();
 		this.borderLining = borderLining;
 	}
-	
 
-	public AbstractUI(char borderLining,int wrapAroundLimit) {
+	public AbstractUI(char borderLining, int wrapAroundLimit) {
 		super();
 		this.borderLining = borderLining;
 		this.wrapAroundLimit = wrapAroundLimit;
 	}
 
-	
 	// lines manipulator methods
-	
+
 	public void addLeftAlignedText(String text) {
 
 		lines.add("L" + text);
@@ -60,29 +58,29 @@ public abstract class AbstractUI extends AbstractUserInput {
 	public void clearLines() {
 		lines.clear();
 	}
-	
+
 	public void addTopOfUI() {
 		addBorder();
 		addSpace();
 	}
-	
+
 	public void addBottomOfUI() {
 		addSpace();
 		addBorder();
 	}
-	public void addHeaders(String...headers) {
+	public void addHeaders(String... headers) {
 		for (String header : headers) {
 			addCenterAlignedText(header);
 		}
 		addSpace();
 	}
-	public void addOptions(String...options) {
+	public void addOptions(String... options) {
 		for (String option : options) {
 			addLeftAlignedText(option);
 			addSpace();
 		}
 	}
-	
+
 	public void setAsBasicMenuUI(String[] headers, String[] options) {
 		addTopOfUI();
 		addHeaders(headers);
@@ -268,6 +266,5 @@ public abstract class AbstractUI extends AbstractUserInput {
 	public void setWrapAroundLimit(int wrapAroundLimit) {
 		this.wrapAroundLimit = wrapAroundLimit;
 	}
-	
 
 }

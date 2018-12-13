@@ -2,7 +2,7 @@ package com.skilldistillery.myutils.consoleUI;
 
 import java.util.Scanner;
 
-public abstract class AbstractUserInput {
+public class UserInput {
 	final Scanner KEYBOARD = new Scanner(System.in);
 	final String INVALID_INPUT_PROMPT = "Not a valid input. Please try again.";
 	final String OUT_OF_RANGE_PROMPT = "Input not within specific range. Please try again";

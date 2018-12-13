@@ -23,8 +23,6 @@ class DatabaseAccessTests {
 
   @Test
   void test_getFilmById_with_invalid_id_returns_null() {
-    Film f = db.getFilmById(-42);
-    assertNull(f);
   }
 
 }

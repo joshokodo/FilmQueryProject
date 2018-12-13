@@ -10,18 +10,18 @@ import com.skilldistillery.filmquery.database.DatabaseAccessorObject;
 import com.skilldistillery.filmquery.entities.Actor;
 import com.skilldistillery.filmquery.entities.Film;
 import com.skilldistillery.filmquery.entities.FilmQueryUI;
+import com.skilldistillery.myutils.consoleUI.UserInput;
 
 public class FilmQueryApp {
 
 	private DatabaseAccessor db;
 	private FilmQueryUI ui;
+	private UserInput input;
 	private int numberChoice;
 	private String textChoice;
 
 	public static void main(String[] args) {
 		FilmQueryApp app = new FilmQueryApp();
-		// app.launchApp();
-
 		app.launchApp();
 
 	}
@@ -29,23 +29,17 @@ public class FilmQueryApp {
 	public FilmQueryApp() {
 		db = new DatabaseAccessorObject();
 		ui = new FilmQueryUI();
+		input = new UserInput();
 		numberChoice = 0;
 		textChoice = "";
-	}
-
-	private void test() throws SQLException {
-		Film film = db.getFilmById(1);
-		Actor actor = db.getActorById(1);
-		System.out.println(film);
-		System.out.println(actor);
 	}
 
 	public void launchApp() {
 
 		while (true) {
 
-			numberChoice = ui.mainMenuPrompt();
-
+			ui.mainMenuPrompt();
+			numberChoice = input.getIntInputFromUser(1, 4);
 			switch (numberChoice) {
 
 				case 1 :
@@ -69,7 +63,12 @@ public class FilmQueryApp {
 					}
 					break;
 
+					
 				case 3 :
+					launchAddFilm();
+					break;
+					
+				case 4 :
 					exitProgram();
 					break;
 
@@ -82,19 +81,45 @@ public class FilmQueryApp {
 
 	}
 
+	private void launchAddFilm() {
+		while(true) {
+			
+			ui.enterTitlePrompt();
+			String inputStr = input.getStringInputFromUser();
+			
+			if(inputStr.indexOf("-1") >= 0) {
+				break;
+			}
+			Film newFilm = new Film();
+			newFilm.setTitle(inputStr);
+			newFilm.setDescription("A new summer blockbuster");
+			newFilm.setLanguageId(1);
+			newFilm.setRentalDuration(5);
+			newFilm.setRentalRate(4.99);
+			newFilm.setReplacementCost(50.00);
+			
+			db.addFilm(newFilm);
+			ui.printFilmSimpleDetails(newFilm);
+			ui.printFilmAddedMessage(newFilm);
+			
+			break;
+		}
+	}
+
 	private void launchSearchFilmByKeyword() throws SQLException {
 
 		while (true) {
-
-			textChoice = ui.searchFilmByKeywordPrompt();
+			
+			ui.searchFilmByKeywordPrompt();
+			textChoice = input.getStringInputFromUser();
 
 			if (textChoice.indexOf("-1") >= 0) {
 				break;
 			}
 
 			List<Film> films = db.getFilmByKeyword(textChoice);
-			boolean filmFound = films != null ? true : false;
-
+			boolean filmFound = films.size() > 0 ? true : false;
+			System.out.println(filmFound);
 			if (!filmFound) {
 				ui.printFilmNotFound();
 				continue;
@@ -105,7 +130,8 @@ public class FilmQueryApp {
 					ui.printFilmSimpleDetails(film);
 
 				}
-				numberChoice = ui.moreOptionsPrompt();
+				ui.moreOptionsPrompt();
+				numberChoice = input.getIntInputFromUser(1, 4);
 
 				if (numberChoice == 1) {
 					for (Film film : films) {
@@ -130,8 +156,8 @@ public class FilmQueryApp {
 	private void launchSearchFilmById() throws SQLException {
 
 		while (true) {
-
-			numberChoice = ui.searchFilmByIdPrompt();
+			ui.searchFilmByIdPrompt();
+			numberChoice = input.getIntInputFromUser();
 
 			// cancel's search and returns user to main menu
 			if (numberChoice == -1) {
@@ -148,7 +174,8 @@ public class FilmQueryApp {
 			} else if (filmFound) {
 
 				ui.printFilmSimpleDetails(film);
-				numberChoice = ui.moreOptionsPrompt();
+				ui.moreOptionsPrompt();
+				numberChoice = input.getIntInputFromUser(1, 4);
 
 				if (numberChoice == 1) {
 					ui.printFilmAllDetails(film);
@@ -171,7 +198,7 @@ public class FilmQueryApp {
 
 	private void exitProgram() {
 		// close all connections
-		ui.closeKeyboard();
+		input.closeKeyboard();
 		ui.printExitProgram();
 		System.exit(0);
 

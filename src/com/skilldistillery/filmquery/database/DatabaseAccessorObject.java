@@ -8,6 +8,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.management.RuntimeErrorException;
+
+import com.mysql.jdbc.Statement;
 import com.skilldistillery.filmquery.entities.Actor;
 import com.skilldistillery.filmquery.entities.Film;
 
@@ -16,25 +19,26 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 	private static final String URL = "jdbc:mysql://localhost:3306/sdvid?useSSL=false";
 	private static final String USERNAME = "student";
 	private static final String PASSWORD = "student";
+
 	private static final String ACTOR_BY_ID_SQL = "SELECT * FROM actor WHERE actor.id = ?";
 
 	private static final String ACTORS_BY_FILM_ID_SQL = " SELECT a.*, f.*"
-			+ "  FROM actor a JOIN film_actor fa ON a.id = fa.actor_id\n"
-			+ "  JOIN film f ON fa.film_id = f.id\n"
+			+ "  FROM actor a JOIN film_actor fa ON a.id = fa.actor_id\n" + "  JOIN film f ON fa.film_id = f.id\n"
 			+ "  WHERE fa.film_id = ?;";
 
 	private static final String FILM_BY_ID_SQL = "SELECT f.*, l.name FROM film f "
 			+ "JOIN language l on f.language_id = l.id  " + "WHERE f.id = ?";
 	private static final String FILM_BY_KEYWORD_SQL = "select distinct f.*, l.* from film f "
-			+ "join language l on f.language_id = l.id "
-			+ "join film_actor fa on fa.film_id = f.id "
-			+ "join actor a on a.id = fa.actor_id "
-			+ "where f.title like ? or f.description like ?";
+			+ "join language l on f.language_id = l.id " + "join film_actor fa on fa.film_id = f.id "
+			+ "join actor a on a.id = fa.actor_id " + "where f.title like ? or f.description like ?";
 	private static final String FILMS_BY_ACTOR_ID_SQL = " SELECT f.*, a.*, l.*"
-			+ "  FROM actor a JOIN film_actor fa ON a.id = fa.actor_id\n"
-			+ "  JOIN film f ON fa.film_id = f.id\n"
-			+ "	 JOIN language l ON f.language_id = l.id\n"
-			+ "  WHERE fa.actor_id = ?\n";
+			+ "  FROM actor a JOIN film_actor fa ON a.id = fa.actor_id\n" + "  JOIN film f ON fa.film_id = f.id\n"
+			+ "	 JOIN language l ON f.language_id = l.id\n" + "  WHERE fa.actor_id = ?\n";
+
+	private static final String ADD_FILM_SQL = "INSERT INTO film (title, language_id, rental_duration, rental_rate, replacement_cost)\n" + 
+			"values (?, ?, ?, ?, ?);";
+	
+	private static final String ADD_FILM_ACTOR_SQL = "INSERT INTO film_actor (film_id, actor_id) VALUES (?,?)";
 
 	// static initializer
 	static {
@@ -156,7 +160,8 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 			film.setSpecialFeatures(results.getString("special_features"));
 			film.setCast(getActorsByFilmId(film.getId()));
 			film.setLanguage(results.getString("name"));
-			films.add(film);;
+			films.add(film);
+			;
 		}
 		conn.close();
 		stmt.close();
@@ -191,13 +196,64 @@ public class DatabaseAccessorObject implements DatabaseAccessor {
 			film.setSpecialFeatures(results.getString("special_features"));
 			film.setCast(getActorsByFilmId(film.getId()));
 			film.setLanguage(results.getString("name"));
-			films.add(film);;
+			films.add(film);
+			;
 		}
 		conn.close();
 		stmt.close();
 		results.close();
 		return films;
 
+	}
+
+	@Override
+	public Film addFilm(Film film) {
+		Connection conn = null;
+
+		try {
+			conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
+			conn.setAutoCommit(false);
+			PreparedStatement stmt = conn.prepareStatement(ADD_FILM_SQL, Statement.RETURN_GENERATED_KEYS);
+			stmt.setString(1, film.getTitle());
+			stmt.setInt(2, 1);
+			stmt.setInt(3, film.getRentalDuration());
+			stmt.setDouble(4, film.getRentalRate());
+			stmt.setDouble(5, film.getReplacementCost());
+			
+			int updateCount = stmt.executeUpdate();
+			if (updateCount == 1) {
+				ResultSet keys = stmt.getGeneratedKeys();
+				if (keys.next()) {
+					int newFilmId = keys.getInt(1);
+					film.setId(newFilmId);
+					if (film.getCast() != null && film.getCast().size() > 0) {
+						stmt = conn.prepareStatement(ADD_FILM_ACTOR_SQL);
+						for (Actor actor : film.getCast()) {
+							stmt.setInt(1, newFilmId);
+							stmt.setInt(2, actor.getId());
+							updateCount = stmt.executeUpdate();
+						}
+					}
+				}
+			}
+			else {
+				film = null;
+			}
+			conn.commit();
+			System.out.println("Commited");
+		} catch (SQLException sqle) {
+			sqle.printStackTrace();
+			if (conn != null) {
+				try {
+					conn.rollback();
+				} catch (SQLException sqle2) {
+					System.err.println("Error trying to rollback");
+				}
+			}
+			throw new RuntimeException("Error inserting film " + film);
+		}
+		
+		return film;
 	}
 
 }

@@ -3,7 +3,7 @@ package com.skilldistillery.myutils.consoleUI;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class AbstractUI extends AbstractUserInput {
+public abstract class AbstractUI {
 
 	private final int PADDING = 4;
 	private final int DEFAULT_SPACING = 5;

@@ -1,5 +1,5 @@
 ## Week 6 Homework: FilmQuery Project
-
+![Alt text](filmqueryimg.png "Front Page")
 ### Overview
 This program was to assigned to test and practice connecting to a database focusing on reading and adding to it using a database accessor object and querying with sql statements and utilizing J Unit test to ensure everything worked properly. 
 
